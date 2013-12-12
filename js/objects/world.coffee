@@ -1,0 +1,3 @@
+class World
+	update: () ->
+	draw: () ->
