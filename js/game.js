@@ -2,6 +2,34 @@
 (function() {
   var Engine, Handle, Player, Timers, World, root;
 
+  Handle = (function() {
+    function Handle(canvas, bgm, sfx) {
+      this.canvas = document.getElementById(canvas);
+      this.context = this.canvas.getContext('2d');
+      this.bgm = document.getElementById(bgm);
+      this.sfx = document.getElementById(sfx);
+    }
+
+    Handle.prototype.update = function() {};
+
+    Handle.prototype.clear = function() {
+      this.context.fillStyle = 'rgb(0, 64, 0)';
+      return this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    };
+
+    return Handle;
+
+  })();
+
+  Timers = (function() {
+    function Timers() {}
+
+    Timers.prototype.update = function() {};
+
+    return Timers;
+
+  })();
+
   root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
   Engine = (function() {
@@ -14,8 +42,8 @@
     function Engine(canvas, bgm, sfx) {
       this.core.handle = new Handle(canvas, bgm, sfx);
       this.core.timers = new Timers();
-      this.objects.player = new Player(this.core.handle);
-      this.objects.world = new World(this.core.handle);
+      this.objects.player = new Player(this.core);
+      this.objects.world = new World(this.core);
       this.main(this);
     }
 
@@ -79,41 +107,74 @@
   })();
 
   World = (function() {
-    function World() {}
+    World.prototype.size = {};
+
+    World.prototype.arr = [];
+
+    function World(core) {
+      this.size.height = 32;
+      this.size.width = 32;
+      this.prepare();
+    }
+
+    World.prototype.prepare = function() {
+      var i, j;
+      return this.arr = (function() {
+        var _i, _ref, _results;
+        _results = [];
+        for (i = _i = 0, _ref = this.size.height; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          _results.push((function() {
+            var _j, _ref1, _results1;
+            _results1 = [];
+            for (j = _j = 0, _ref1 = this.size.width; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
+              _results1.push(0);
+            }
+            return _results1;
+          }).call(this));
+        }
+        return _results;
+      }).call(this);
+    };
+
+    World.prototype.generate = function(perlin) {
+      var i, j;
+      return this.arr = (function() {
+        var _i, _ref, _results;
+        _results = [];
+        for (i = _i = 0, _ref = this.size.height; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          _results.push((function() {
+            var _j, _ref1, _results1;
+            _results1 = [];
+            for (j = _j = 0, _ref1 = this.size.width; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
+              _results1.push(perlin(i, j, 0));
+            }
+            return _results1;
+          }).call(this));
+        }
+        return _results;
+      }).call(this);
+    };
 
     World.prototype.update = function() {};
 
-    World.prototype.draw = function() {};
-
-    return World;
-
-  })();
-
-  Timers = (function() {
-    function Timers() {}
-
-    Timers.prototype.update = function() {};
-
-    return Timers;
-
-  })();
-
-  Handle = (function() {
-    function Handle(canvas, bgm, sfx) {
-      this.canvas = document.getElementById(canvas);
-      this.context = this.canvas.getContext('2d');
-      this.bgm = document.getElementById(bgm);
-      this.sfx = document.getElementById(sfx);
-    }
-
-    Handle.prototype.update = function() {};
-
-    Handle.prototype.clear = function() {
-      this.context.fillStyle = 'rgb(0, 64, 0)';
-      return this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    World.prototype.draw = function(context) {
+      var i, j, _i, _ref, _results;
+      _results = [];
+      for (i = _i = 0, _ref = this.size.height; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        _results.push((function() {
+          var _j, _ref1, _results1;
+          _results1 = [];
+          for (j = _j = 0, _ref1 = this.size.width; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
+            context.fillStyle = 'rgb(255,255,255)';
+            _results1.push(context.fillRect(i * 16, j * 16, 16, 16));
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
     };
 
-    return Handle;
+    return World;
 
   })();
 

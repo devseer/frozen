@@ -9,8 +9,8 @@ class Engine
 		@core.handle = new Handle(canvas, bgm, sfx)
 		@core.timers = new Timers()
 
-		@objects.player = new Player(@core.handle)
-		@objects.world = new World(@core.handle)
+		@objects.player = new Player(@core)
+		@objects.world = new World(@core)
 
 		@main(this)
 
