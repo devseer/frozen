@@ -1,1 +1,1 @@
-coffee -o . -j game.js -cw js
+coffee -o js -j game.js -cw lib

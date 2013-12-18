@@ -93,19 +93,6 @@
 
   })();
 
-  Core = (function() {
-    function Core(canvas, bgm, sfx) {
-      this.handle = new Handle(canvas, bgm, sfx);
-      this.timers = new Timers();
-      this.tile = new Tile();
-      this.input = new Input();
-      this.event = new Event();
-    }
-
-    return Core;
-
-  })();
-
   root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
   Engine = (function() {
@@ -288,6 +275,19 @@
     }
 
     return Objects;
+
+  })();
+
+  Core = (function() {
+    function Core(canvas, bgm, sfx) {
+      this.handle = new Handle(canvas, bgm, sfx);
+      this.timers = new Timers();
+      this.tile = new Tile();
+      this.input = new Input();
+      this.event = new Event();
+    }
+
+    return Core;
 
   })();
 
