@@ -2,6 +2,19 @@
 (function() {
   var Core, Engine, Event, Handle, Input, Objects, Player, Tile, Timers, World, root;
 
+  Event = (function() {
+    function Event() {}
+
+    Event.prototype.update = function() {};
+
+    Event.prototype.collision = function(pos) {
+      return false;
+    };
+
+    return Event;
+
+  })();
+
   Handle = (function() {
     function Handle(canvas, bgm, sfx) {
       this.canvas = document.getElementById(canvas);
@@ -21,12 +34,75 @@
 
   })();
 
+  Input = (function() {
+    Input.prototype.keys = [];
+
+    Input.prototype.direction = {
+      up: 82,
+      down: 72,
+      left: 83,
+      right: 84
+    };
+
+    function Input(handle) {
+      var i, k, _i;
+      for (i = _i = 0; _i <= 255; i = ++_i) {
+        this.keys.push(false);
+      }
+      k = this.keys;
+      document.onkeydown = function(e) {
+        return k[e.keyCode] = true;
+      };
+      document.onkeyup = function(e) {
+        return k[e.keyCode] = false;
+      };
+    }
+
+    Input.prototype.update = function() {};
+
+    return Input;
+
+  })();
+
+  Tile = (function() {
+    Tile.prototype.source = {
+      iceworld: 'iceworld.png'
+    };
+
+    function Tile() {}
+
+    Tile.prototype.update = function() {};
+
+    Tile.prototype.loadTileset = function(name) {
+      var img;
+      img = new Image();
+      img.src = 'img/tile/' + this.source[name];
+      return img;
+    };
+
+    return Tile;
+
+  })();
+
   Timers = (function() {
     function Timers() {}
 
     Timers.prototype.update = function() {};
 
     return Timers;
+
+  })();
+
+  Core = (function() {
+    function Core(canvas, bgm, sfx) {
+      this.handle = new Handle(canvas, bgm, sfx);
+      this.timers = new Timers();
+      this.tile = new Tile();
+      this.input = new Input();
+      this.event = new Event();
+    }
+
+    return Core;
 
   })();
 
@@ -202,82 +278,6 @@
     };
 
     return World;
-
-  })();
-
-  Tile = (function() {
-    Tile.prototype.source = {
-      iceworld: 'iceworld.png'
-    };
-
-    function Tile() {}
-
-    Tile.prototype.update = function() {};
-
-    Tile.prototype.loadTileset = function(name) {
-      var img;
-      img = new Image();
-      img.src = 'img/tile/' + this.source[name];
-      return img;
-    };
-
-    return Tile;
-
-  })();
-
-  Input = (function() {
-    Input.prototype.keys = [];
-
-    Input.prototype.direction = {
-      up: 82,
-      down: 72,
-      left: 83,
-      right: 84
-    };
-
-    function Input(handle) {
-      var i, k, _i;
-      for (i = _i = 0; _i <= 255; i = ++_i) {
-        this.keys.push(false);
-      }
-      k = this.keys;
-      document.onkeydown = function(e) {
-        return k[e.keyCode] = true;
-      };
-      document.onkeyup = function(e) {
-        return k[e.keyCode] = false;
-      };
-    }
-
-    Input.prototype.update = function() {};
-
-    return Input;
-
-  })();
-
-  Event = (function() {
-    function Event() {}
-
-    Event.prototype.update = function() {};
-
-    Event.prototype.collision = function(pos) {
-      return false;
-    };
-
-    return Event;
-
-  })();
-
-  Core = (function() {
-    function Core(canvas, bgm, sfx) {
-      this.handle = new Handle(canvas, bgm, sfx);
-      this.timers = new Timers();
-      this.tile = new Tile();
-      this.input = new Input();
-      this.event = new Event();
-    }
-
-    return Core;
 
   })();
 
