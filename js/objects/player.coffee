@@ -19,10 +19,15 @@ class Player
 		@setDirection(core.input, 'left')
 		@setDirection(core.input, 'up')
 		@setDirection(core.input, 'right')
+		@move(core.event.collision)
 
 	setDirection: (input, dir) ->
 		if input.keys[input.direction[dir]]
 			@direction = @dir[dir]
 
-	draw: () ->
-		console.log(@direction)
+	move: (collision) ->
+		next = @pos
+		if not collision(next)
+			@pos = next
+
+	draw: (context) ->

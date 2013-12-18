@@ -6,14 +6,8 @@ class Engine
 	objects: {}
 
 	constructor: (canvas, bgm, sfx) ->
-		@core.handle = new Handle(canvas, bgm, sfx)
-		@core.timers = new Timers()
-		@core.tile = new Tile()
-		@core.input = new Input()
-
-		@objects.player = new Player(@core)
-		@objects.world = new World(@core)
-
+		@core = new Core(canvas, bgm, sfx)
+		@objects = new Objects(@core)
 		@main(this)
 
 	update: () ->
