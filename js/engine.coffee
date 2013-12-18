@@ -9,6 +9,7 @@ class Engine
 		@core.handle = new Handle(canvas, bgm, sfx)
 		@core.timers = new Timers()
 		@core.tile = new Tile()
+		@core.input = new Input()
 
 		@objects.player = new Player(@core)
 		@objects.world = new World(@core)
@@ -17,7 +18,7 @@ class Engine
 
 	update: () ->
 		@core[i].update() for i of @core
-		@objects[i].update() for i of @objects
+		@objects[i].update(@core) for i of @objects
 
 	draw: () ->
 		@core.handle.clear()
