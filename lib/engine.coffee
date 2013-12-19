@@ -11,12 +11,12 @@ class Engine
 		@main(this)
 
 	update: () ->
-		@core[i].update() for i of @core
-		@objects[i].update(@core) for i of @objects
+		i.update() for i in @core
+		i.update(@core) for i in @objects.list
 
 	draw: () ->
-		@core.handle.clear()
-		@objects[i].draw(@core.handle.context) for i of @objects
+		@core.handle.clear
+		i.draw(@core.handle.context) for i in @objects.list
 
 	main: (c) ->
 		c.update()

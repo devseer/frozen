@@ -1,6 +1,10 @@
 class Objects
+	list: []
+
 	constructor: (core) ->
-		@world = new World(core)
-		@player = new Player(core)
-		@mob = new Mob(core)
-		@item = new Item(core)
+		@list = [
+			new World(core),
+			new Player(core),
+			new Mob(core),
+			new Item(core)
+		]

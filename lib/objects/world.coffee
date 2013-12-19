@@ -1,36 +1,44 @@
 class World
+	tile: {}
 	size: {}
 	arr: []
 	tileset: null
+	viewport: {}
+	offset: {}
 
 	constructor: (core) ->
-		@size.height = 32
-		@size.width = 32
+		@size.x = 32
+		@size.y = 32
 		@prepare()
 		@tileset = core.tile.loadTileset('iceworld')
+		@viewport = { width: core.tile.viewport.width, height: core.tile.viewport.height }
+		@offset = { x: 0, y: 0}
+		@tile = { width: core.tile.tile.width, height: core.tile.tile.height}
 
 	prepare: () ->
-		@arr = for i in [0...@size.height]
-			for j in [0...@size.width]
+		@arr = for i in [0...@size.x]
+			for j in [0...@size.y]
 				0
 
 		for i in [0..20]
-			x = Math.floor(Math.random() * @size.width)
-			y = Math.floor(Math.random() * @size.height)
+			x = Math.floor(Math.random() * @size.x)
+			y = Math.floor(Math.random() * @size.y)
 			@arr[x][y] = 4
 
-	update: () ->
+	update: (core) ->
+		@offset = core.tile.offset
+		core.event.updateBound(@size)
 
 	draw: (context) ->
-		for i in [0...@size.height]
-			for j in [0...@size.width]
-				@drawTile(context, i, j)
+		for i in [0...@viewport.width]
+			for j in [0...@viewport.height]
+				@drawTile(context, i, j, i + @offset.x, j + @offset.y)
 
-	drawTile: (context, i, j) ->
+	drawTile: (context, x, y, i, j) ->
 		context.drawImage( \
 			@tileset, \
-			@arr[i][j] % @size.width * 16, \
-			@arr[i][j] / @size.height * 16, \
-			16, 16, \
-			i * 16, j * 16, \
-			16, 16)
+			@arr[i][j] % @size.x * @tile.width, \
+			@arr[i][j] / @size.y * @tile.height, \
+			@tile.width, @tile.height, \
+			x * @tile.width, y * @tile.height, \
+			@tile.width, @tile.height)
