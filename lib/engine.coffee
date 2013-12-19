@@ -15,7 +15,7 @@ class Engine
 		i.update(@core) for i in @objects.list
 
 	draw: () ->
-		@core.handle.clear
+		@core.handle.clear()
 		i.draw(@core.handle.context) for i in @objects.list
 
 	main: (c) ->

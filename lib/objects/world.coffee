@@ -35,10 +35,11 @@ class World
 				@drawTile(context, i, j, i + @offset.x, j + @offset.y)
 
 	drawTile: (context, x, y, i, j) ->
-		context.drawImage( \
-			@tileset, \
-			@arr[i][j] % @size.x * @tile.width, \
-			@arr[i][j] / @size.y * @tile.height, \
-			@tile.width, @tile.height, \
-			x * @tile.width, y * @tile.height, \
-			@tile.width, @tile.height)
+		if i > -1 and i < @arr.length and j > -1 and j < @arr[i].length
+			context.drawImage( \
+				@tileset, \
+				@arr[i][j] % @size.x * @tile.width, \
+				@arr[i][j] / @size.y * @tile.height, \
+				@tile.width, @tile.height, \
+				128 + x * @tile.width, y * @tile.height, \
+				@tile.width, @tile.height)

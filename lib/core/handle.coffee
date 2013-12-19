@@ -8,5 +8,5 @@ class Handle
 	update: () ->
 
 	clear: () ->
-		@context.fillStyle = 'rgb(0, 64, 0)'
+		@context.fillStyle = 'rgb(0, 0, 0)'
 		@context.fillRect(0, 0, @canvas.width, @canvas.height)

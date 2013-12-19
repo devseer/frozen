@@ -43,7 +43,7 @@
     };
 
     Event.prototype.collision = function(pos) {
-      return pos.x < 0 || pos.x > 32 || pos.y < 0 || pos.y > 32;
+      return pos.x < 0 || pos.x > 31 || pos.y < 0 || pos.y > 31;
     };
 
     Event.prototype.updateBound = function(bound) {
@@ -65,7 +65,7 @@
     Handle.prototype.update = function() {};
 
     Handle.prototype.clear = function() {
-      this.context.fillStyle = 'rgb(0, 64, 0)';
+      this.context.fillStyle = 'rgb(0, 0, 0)';
       return this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     };
 
@@ -188,7 +188,7 @@
 
     Engine.prototype.draw = function() {
       var i, _i, _len, _ref, _results;
-      this.core.handle.clear;
+      this.core.handle.clear();
       _ref = this.objects.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -254,8 +254,6 @@
   })();
 
   Player = (function() {
-    Player.prototype.dimensions = {};
-
     Player.prototype.drawpos = {};
 
     Player.prototype.pos = {};
@@ -273,6 +271,8 @@
 
     Player.prototype.frame = 0;
 
+    Player.prototype.tile = {};
+
     Player.prototype.image = null;
 
     function Player(core) {
@@ -280,9 +280,9 @@
         x: (core.tile.viewport.width >> 1) * core.tile.tile.width,
         y: (core.tile.viewport.height >> 1) * core.tile.tile.height
       };
-      this.dimensions = {
-        x: core.tile.tile.width,
-        y: core.tile.tile.height
+      this.tile = {
+        width: core.tile.tile.width,
+        height: core.tile.tile.height
       };
       this.pos = {
         x: 15,
@@ -294,22 +294,23 @@
     }
 
     Player.prototype.update = function(core) {
-      var i;
-      if ((function() {
-        var _results;
-        _results = [];
-        for (i in this.dir) {
-          _results.push(this.setMove(core.input, i));
-        }
-        return _results;
-      }).call(this)) {
-        if (this.move(core.event.collision)) {
-          return core.tile.updateOffset({
-            x: this.pos.x - 7,
-            y: this.pos.y - 7
-          });
+      var i, _results;
+      _results = [];
+      for (i in this.dir) {
+        if (this.setMove(core.input, i)) {
+          if (this.move(core.event.collision)) {
+            _results.push(core.tile.updateOffset({
+              x: this.pos.x - 7,
+              y: this.pos.y - 7
+            }));
+          } else {
+            _results.push(void 0);
+          }
+        } else {
+          _results.push(void 0);
         }
       }
+      return _results;
     };
 
     Player.prototype.setMove = function(input, dir) {
@@ -323,8 +324,8 @@
     Player.prototype.move = function(collision) {
       var next;
       next = {
-        x: this.pos.x + (this.direction === this.dir.left ? 1 : this.direction === this.dir.right ? 1 : 0),
-        y: this.pos.y + (this.direction === this.dir.up ? 1 : this.direction === this.dir.down ? 1 : 0)
+        x: this.pos.x + (this.direction === this.dir.left ? -1 : this.direction === this.dir.right ? 1 : 0),
+        y: this.pos.y + (this.direction === this.dir.up ? -1 : this.direction === this.dir.down ? 1 : 0)
       };
       if (!collision(next)) {
         this.pos = next;
@@ -333,7 +334,7 @@
     };
 
     Player.prototype.draw = function(context) {
-      return context.drawImage(this.image, 256, 256, 16, 16, this.drawpos.x, this.drawpos.y, 16, 16);
+      return context.drawImage(this.image, 16, 128, this.tile.width, this.tile.height, 128 + this.drawpos.x, this.drawpos.y, this.tile.width, this.tile.height);
     };
 
     return Player;
@@ -420,7 +421,9 @@
     };
 
     World.prototype.drawTile = function(context, x, y, i, j) {
-      return context.drawImage(this.tileset, this.arr[i][j] % this.size.x * this.tile.width, this.arr[i][j] / this.size.y * this.tile.height, this.tile.width, this.tile.height, x * this.tile.width, y * this.tile.height, this.tile.width, this.tile.height);
+      if (i > -1 && i < this.arr.length && j > -1 && j < this.arr[i].length) {
+        return context.drawImage(this.tileset, this.arr[i][j] % this.size.x * this.tile.width, this.arr[i][j] / this.size.y * this.tile.height, this.tile.width, this.tile.height, 128 + x * this.tile.width, y * this.tile.height, this.tile.width, this.tile.height);
+      }
     };
 
     return World;
