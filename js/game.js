@@ -147,9 +147,53 @@
   })();
 
   Timers = (function() {
-    function Timers() {}
+    Timers.prototype.timestamp = 0;
 
-    Timers.prototype.update = function() {};
+    Timers.prototype.list = [];
+
+    function Timers() {
+      this.updateTime();
+    }
+
+    Timers.prototype.update = function() {
+      var i, _i, _len, _ref, _results;
+      this.updateTime();
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        if (this.list[i].time < this.timestamp) {
+          _results.push(this.executeTimer(this.list[i]));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Timers.prototype.addTimer = function(interval, repeat, callback) {
+      return this.list.push({
+        interval: interval,
+        repeat: repeat,
+        callback: callback
+      });
+    };
+
+    Timers.prototype.executeTimer = function(timer) {
+      if (this.list[i].repeat) {
+        return this.renewTimer(this.list[i]);
+      } else {
+        return this.list[i].callback();
+      }
+    };
+
+    Timers.prototype.renewTimer = function(timer) {
+      return timer.time = timer.interval + this.timestamp;
+    };
+
+    Timers.prototype.updateTime = function() {
+      return this.timestamp = new Date().getTime();
+    };
 
     return Timers;
 
