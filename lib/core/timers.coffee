@@ -8,20 +8,19 @@ class Timers
 		@updateTime()
 		for i in @list
 			if @list[i].time < @timestamp
-				@executeTimer(@list[i])
+				@executeTimer(@list[i], i)
 
 	addTimer: (interval, repeat, callback) ->
 		@list.push({
 			interval: interval
-			repeat: repeat
 			callback: callback
 		})
 
-	executeTimer: (timer) ->
-		if @list[i].repeat
-			@renewTimer(@list[i])
+	executeTimer: (timer, index) ->
+		if timer.callback()
+			@renewTimer(timer)
 		else
-			@list[i].callback()
+			@list.splice(index, i)
 
 	renewTimer: (timer) ->
 		timer.time = timer.interval + @timestamp

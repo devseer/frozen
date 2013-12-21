@@ -163,7 +163,7 @@
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         i = _ref[_i];
         if (this.list[i].time < this.timestamp) {
-          _results.push(this.executeTimer(this.list[i]));
+          _results.push(this.executeTimer(this.list[i], i));
         } else {
           _results.push(void 0);
         }
@@ -174,16 +174,15 @@
     Timers.prototype.addTimer = function(interval, repeat, callback) {
       return this.list.push({
         interval: interval,
-        repeat: repeat,
         callback: callback
       });
     };
 
-    Timers.prototype.executeTimer = function(timer) {
-      if (this.list[i].repeat) {
-        return this.renewTimer(this.list[i]);
+    Timers.prototype.executeTimer = function(timer, index) {
+      if (timer.callback()) {
+        return this.renewTimer(timer);
       } else {
-        return this.list[i].callback();
+        return this.list.splice(index, i);
       }
     };
 
