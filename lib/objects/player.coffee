@@ -11,6 +11,7 @@ class Player
 	frame: 0
 	tile: {}
 	image: null
+	canMove: false
 
 	constructor: (core) ->
 		@drawpos =
@@ -26,12 +27,18 @@ class Player
 		@state = 0
 		@frame = 0
 		@image = core.tile.loadTileset('iceworld')
+		core.timers.addTimer(100, (@canMove) =>
+			@canMove = true
+			return true
+		)
 
 	update: (core) ->
-		for i of @dir
-			if @setMove(core.input, i)
-				if @move(core.event.collision)
-					core.tile.updateOffset({x: @pos.x - 7, y: @pos.y - 7})
+		if @canMove == true
+			for i of @dir
+				if @setMove(core.input, i)
+					@canMove = false
+					if @move(core.event.collision)
+						core.tile.updateOffset({x: @pos.x - 7, y: @pos.y - 7})
 
 	setMove: (input, dir) ->
 		if input.keys[input.direction[dir]]

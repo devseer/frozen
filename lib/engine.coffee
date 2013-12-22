@@ -11,7 +11,7 @@ class Engine
 		@main(this)
 
 	update: () ->
-		i.update() for i in @core
+		@core[i].update() for i of @core
 		i.update(@core) for i in @objects.list
 
 	draw: () ->

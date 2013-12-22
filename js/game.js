@@ -156,12 +156,10 @@
     }
 
     Timers.prototype.update = function() {
-      var i, _i, _len, _ref, _results;
+      var i, _results;
       this.updateTime();
-      _ref = this.list;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        i = _ref[_i];
+      for (i in this.list) {
         if (this.list[i].time < this.timestamp) {
           _results.push(this.executeTimer(this.list[i], i));
         } else {
@@ -171,9 +169,10 @@
       return _results;
     };
 
-    Timers.prototype.addTimer = function(interval, repeat, callback) {
+    Timers.prototype.addTimer = function(interval, callback) {
       return this.list.push({
         interval: interval,
+        time: this.timestamp,
         callback: callback
       });
     };
@@ -214,16 +213,14 @@
     }
 
     Engine.prototype.update = function() {
-      var i, _i, _j, _len, _len1, _ref, _ref1, _results;
-      _ref = this.core;
+      var i, _i, _len, _ref, _results;
+      for (i in this.core) {
+        this.core[i].update();
+      }
+      _ref = this.objects.list;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         i = _ref[_i];
-        i.update();
-      }
-      _ref1 = this.objects.list;
-      _results = [];
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        i = _ref1[_j];
         _results.push(i.update(this.core));
       }
       return _results;
@@ -318,7 +315,10 @@
 
     Player.prototype.image = null;
 
+    Player.prototype.canMove = false;
+
     function Player(core) {
+      var _this = this;
       this.drawpos = {
         x: (core.tile.viewport.width >> 1) * core.tile.tile.width,
         y: (core.tile.viewport.height >> 1) * core.tile.tile.height
@@ -334,26 +334,34 @@
       this.state = 0;
       this.frame = 0;
       this.image = core.tile.loadTileset('iceworld');
+      core.timers.addTimer(100, function(canMove) {
+        _this.canMove = canMove;
+        _this.canMove = true;
+        return true;
+      });
     }
 
     Player.prototype.update = function(core) {
       var i, _results;
-      _results = [];
-      for (i in this.dir) {
-        if (this.setMove(core.input, i)) {
-          if (this.move(core.event.collision)) {
-            _results.push(core.tile.updateOffset({
-              x: this.pos.x - 7,
-              y: this.pos.y - 7
-            }));
+      if (this.canMove === true) {
+        _results = [];
+        for (i in this.dir) {
+          if (this.setMove(core.input, i)) {
+            this.canMove = false;
+            if (this.move(core.event.collision)) {
+              _results.push(core.tile.updateOffset({
+                x: this.pos.x - 7,
+                y: this.pos.y - 7
+              }));
+            } else {
+              _results.push(void 0);
+            }
           } else {
             _results.push(void 0);
           }
-        } else {
-          _results.push(void 0);
         }
+        return _results;
       }
-      return _results;
     };
 
     Player.prototype.setMove = function(input, dir) {

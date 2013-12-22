@@ -6,13 +6,14 @@ class Timers
 
 	update: () ->
 		@updateTime()
-		for i in @list
+		for i of @list
 			if @list[i].time < @timestamp
 				@executeTimer(@list[i], i)
 
-	addTimer: (interval, repeat, callback) ->
+	addTimer: (interval, callback) ->
 		@list.push({
 			interval: interval
+			time: @timestamp
 			callback: callback
 		})
 
