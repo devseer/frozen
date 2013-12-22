@@ -12,6 +12,7 @@ class Player
 	tile: {}
 	image: null
 	canMove: false
+	canAttack: true
 
 	constructor: (core) ->
 		@drawpos =
@@ -27,12 +28,32 @@ class Player
 		@state = 0
 		@frame = 0
 		@image = core.tile.loadTileset('iceworld')
-		core.timers.addTimer(100, (@canMove) =>
+		core.timers.addTimer(80, (@canMove) =>
 			@canMove = true
 			return true
 		)
 
 	update: (core) ->
+		@updateAttack(core)
+		@updateMove(core)
+
+	updateAttack: (core) ->
+		if @canAttack == true
+			if @setAttack(core.input)
+				@canAttack = false
+				core.timers.addTimer(1000, (@resetAttack) =>
+					@canAttack = true
+					return false
+				)
+
+	setAttack: (input) ->
+		if input.keys[input.action.attack]
+			console.log('attack')
+			return true
+		else
+			return false
+
+	updateMove: (core) ->
 		if @canMove == true
 			for i of @dir
 				if @setMove(core.input, i)

@@ -83,6 +83,10 @@
       right: 84
     };
 
+    Input.prototype.action = {
+      attack: 32
+    };
+
     function Input(handle) {
       var i, k, _i;
       for (i = _i = 0; _i <= 255; i = ++_i) {
@@ -172,7 +176,7 @@
     Timers.prototype.addTimer = function(interval, callback) {
       return this.list.push({
         interval: interval,
-        time: this.timestamp,
+        time: this.timestamp + interval,
         callback: callback
       });
     };
@@ -181,7 +185,7 @@
       if (timer.callback()) {
         return this.renewTimer(timer);
       } else {
-        return this.list.splice(index, i);
+        return this.list.splice(index, 1);
       }
     };
 
@@ -317,6 +321,8 @@
 
     Player.prototype.canMove = false;
 
+    Player.prototype.canAttack = true;
+
     function Player(core) {
       var _this = this;
       this.drawpos = {
@@ -334,7 +340,7 @@
       this.state = 0;
       this.frame = 0;
       this.image = core.tile.loadTileset('iceworld');
-      core.timers.addTimer(100, function(canMove) {
+      core.timers.addTimer(80, function(canMove) {
         _this.canMove = canMove;
         _this.canMove = true;
         return true;
@@ -342,6 +348,34 @@
     }
 
     Player.prototype.update = function(core) {
+      this.updateAttack(core);
+      return this.updateMove(core);
+    };
+
+    Player.prototype.updateAttack = function(core) {
+      var _this = this;
+      if (this.canAttack === true) {
+        if (this.setAttack(core.input)) {
+          this.canAttack = false;
+          return core.timers.addTimer(1000, function(resetAttack) {
+            _this.resetAttack = resetAttack;
+            _this.canAttack = true;
+            return false;
+          });
+        }
+      }
+    };
+
+    Player.prototype.setAttack = function(input) {
+      if (input.keys[input.action.attack]) {
+        console.log('attack');
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    Player.prototype.updateMove = function(core) {
       var i, _results;
       if (this.canMove === true) {
         _results = [];

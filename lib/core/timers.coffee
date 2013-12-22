@@ -13,7 +13,7 @@ class Timers
 	addTimer: (interval, callback) ->
 		@list.push({
 			interval: interval
-			time: @timestamp
+			time: @timestamp + interval
 			callback: callback
 		})
 
@@ -21,7 +21,7 @@ class Timers
 		if timer.callback()
 			@renewTimer(timer)
 		else
-			@list.splice(index, i)
+			@list.splice(index, 1)
 
 	renewTimer: (timer) ->
 		timer.time = timer.interval + @timestamp

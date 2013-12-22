@@ -6,6 +6,9 @@ class Input
 		left: 83
 		right: 84
 
+	action:
+		attack: 32
+
 	constructor: (handle) ->
 		for i in [0..255]
 			@keys.push(false)
