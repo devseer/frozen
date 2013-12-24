@@ -117,7 +117,8 @@
 
     Tile.prototype.source = {
       iceworld: 'iceworld.png',
-      mage: 'mage.png'
+      mage: 'mage.png',
+      snowball: 'snowball.png'
     };
 
     function Tile() {
@@ -546,10 +547,32 @@
   Particle = (function() {
     Particle.prototype.list = [];
 
-    function Particle(core) {}
+    Particle.prototype.snowball = {};
+
+    Particle.prototype.nextFrame = false;
+
+    Particle.prototype.frame = 0;
+
+    function Particle(core) {
+      var _this = this;
+      this.snowball = core.tile.loadSpriteset('snowball');
+      core.timers.addTimer(100, function(nextFrame) {
+        _this.nextFrame = nextFrame;
+        _this.nextFrame = true;
+        return true;
+      });
+    }
 
     Particle.prototype.update = function() {
       var i, _i, _len, _ref, _results;
+      if (this.nextFrame) {
+        this.nextFrame = false;
+        if (this.frame < 3) {
+          this.frame++;
+        } else {
+          this.frame = 0;
+        }
+      }
       _ref = this.list;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -575,14 +598,7 @@
     };
 
     Particle.prototype.draw = function(context) {
-      var i, _i, _len, _ref, _results;
-      _ref = this.list;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        i = _ref[_i];
-        _results.push(context.fillRect(this.list[i].pos.x, this.list[i].pos.y, 16, 16));
-      }
-      return _results;
+      return context.drawImage(this.snowball, 16 * this.frame, 0, 16, 16, 128, 0, 16, 16);
     };
 
     return Particle;

@@ -1,9 +1,24 @@
 class Particle
 	list: []
+	snowball: {}
+	nextFrame: false
+	frame: 0
 
 	constructor: (core) ->
+		@snowball = core.tile.loadSpriteset('snowball')
+		core.timers.addTimer(100, (@nextFrame) =>
+			@nextFrame = true
+			return true
+		)
 
 	update: () ->
+		if @nextFrame
+			@nextFrame = false
+			if @frame < 3
+				@frame++
+			else
+				@frame = 0
+
 		for i in @list
 			@updatePosition(@list[i])
 
@@ -18,5 +33,4 @@ class Particle
 		})
 
 	draw: (context) ->
-		for i in @list
-			context.fillRect(@list[i].pos.x, @list[i].pos.y, 16, 16)
+		context.drawImage(@snowball, 16 * @frame, 0, 16, 16, 128, 0, 16, 16)
