@@ -116,7 +116,8 @@
     Tile.prototype.offset = {};
 
     Tile.prototype.source = {
-      iceworld: 'iceworld.png'
+      iceworld: 'iceworld.png',
+      mage: 'mage.png'
     };
 
     function Tile() {
@@ -144,6 +145,13 @@
       var img;
       img = new Image();
       img.src = 'img/tile/' + this.source[name];
+      return img;
+    };
+
+    Tile.prototype.loadSpriteset = function(name) {
+      var img;
+      img = new Image();
+      img.src = 'img/sprite/' + this.source[name];
       return img;
     };
 
@@ -305,9 +313,9 @@
 
     Player.prototype.dir = {
       down: 0,
-      left: 1,
+      right: 1,
       up: 2,
-      right: 3
+      left: 3
     };
 
     Player.prototype.direction = 0;
@@ -340,7 +348,7 @@
       };
       this.state = 0;
       this.frame = 0;
-      this.image = core.tile.loadTileset('iceworld');
+      this.image = core.tile.loadSpriteset('mage');
       core.timers.addTimer(80, function(canMove) {
         _this.canMove = canMove;
         _this.canMove = true;
@@ -350,7 +358,15 @@
 
     Player.prototype.update = function(core) {
       this.updateAttack(core);
-      return this.updateMove(core);
+      this.updateMove(core);
+      return this.updateFrame(core);
+    };
+
+    Player.prototype.updateFrame = function(core) {
+      var _ref;
+      return this.frame = (_ref = this.frame > 3) != null ? _ref : {
+        0: this.frame + 1
+      };
     };
 
     Player.prototype.updateAttack = function(core) {
@@ -421,7 +437,7 @@
     };
 
     Player.prototype.draw = function(context) {
-      return context.drawImage(this.image, 16, 128, this.tile.width, this.tile.height, 128 + this.drawpos.x, this.drawpos.y, this.tile.width, this.tile.height);
+      return context.drawImage(this.image, this.frame * this.tile.width, this.direction * this.tile.height, this.tile.width, this.tile.height, 128 + this.drawpos.x, this.drawpos.y, this.tile.width, this.tile.height);
     };
 
     return Player;

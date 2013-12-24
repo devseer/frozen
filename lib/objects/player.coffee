@@ -3,9 +3,9 @@ class Player
 	pos: {}
 	dir:
 		down: 0
-		left: 1
+		right: 1
 		up: 2
-		right: 3
+		left: 3
 	direction: 0
 	state: 0
 	frame: 0
@@ -27,7 +27,7 @@ class Player
 
 		@state = 0
 		@frame = 0
-		@image = core.tile.loadTileset('iceworld')
+		@image = core.tile.loadSpriteset('mage')
 		core.timers.addTimer(80, (@canMove) =>
 			@canMove = true
 			return true
@@ -36,6 +36,10 @@ class Player
 	update: (core) ->
 		@updateAttack(core)
 		@updateMove(core)
+		@updateFrame(core)
+
+	updateFrame: (core) ->
+		@frame = @frame > 3 ? 0 : @frame + 1
 
 	updateAttack: (core) ->
 		if @canAttack == true
@@ -88,7 +92,7 @@ class Player
 	draw: (context) ->
 		context.drawImage( \
 			@image, \
-			16, 128,\
+			@frame*@tile.width, @direction*@tile.height,
 			@tile.width, @tile.height, \
 			128 + @drawpos.x, @drawpos.y, \
 			@tile.width, @tile.height,)

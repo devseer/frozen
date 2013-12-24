@@ -5,6 +5,7 @@ class Tile
 
 	source:
 		iceworld: 'iceworld.png'
+		mage: 'mage.png'
 
 	constructor: () ->
 		@tile = { width: 16, height: 16 }
@@ -19,5 +20,9 @@ class Tile
 	loadTileset: (name) ->
 		img = new Image()
 		img.src = 'img/tile/' + @source[name]
+		return img
 
+	loadSpriteset: (name) ->
+		img = new Image()
+		img.src = 'img/sprite/' + @source[name]
 		return img
