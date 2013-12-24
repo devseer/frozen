@@ -5,3 +5,4 @@ class Core
 		@tile = new Tile()
 		@input = new Input()
 		@event = new Event()
+		@generate = new Generate()

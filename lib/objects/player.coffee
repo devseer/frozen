@@ -40,6 +40,10 @@ class Player
 	updateAttack: (core) ->
 		if @canAttack == true
 			if @setAttack(core.input)
+				core.generate.spawn(
+					core.generate.type.particle,
+					@pos, @direction
+				)
 				@canAttack = false
 				core.timers.addTimer(1000, (@resetAttack) =>
 					@canAttack = true
