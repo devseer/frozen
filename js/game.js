@@ -328,6 +328,10 @@
 
     Player.prototype.image = null;
 
+    Player.prototype.walk = false;
+
+    Player.prototype.nextFrame = false;
+
     Player.prototype.canMove = false;
 
     Player.prototype.canAttack = true;
@@ -349,9 +353,14 @@
       this.state = 0;
       this.frame = 0;
       this.image = core.tile.loadSpriteset('mage');
-      core.timers.addTimer(80, function(canMove) {
+      core.timers.addTimer(120, function(canMove) {
         _this.canMove = canMove;
         _this.canMove = true;
+        return true;
+      });
+      core.timers.addTimer(120, function(nextFrame) {
+        _this.nextFrame = nextFrame;
+        _this.nextFrame = true;
         return true;
       });
     }
@@ -363,10 +372,14 @@
     };
 
     Player.prototype.updateFrame = function(core) {
-      var _ref;
-      return this.frame = (_ref = this.frame > 3) != null ? _ref : {
-        0: this.frame + 1
-      };
+      if (this.walk && this.nextFrame) {
+        this.nextFrame = false;
+        if (this.frame < 3) {
+          return this.frame++;
+        } else {
+          return this.frame = 0;
+        }
+      }
     };
 
     Player.prototype.updateAttack = function(core) {
@@ -394,26 +407,23 @@
     };
 
     Player.prototype.updateMove = function(core) {
-      var i, _results;
+      var i, isKeydown;
+      isKeydown = false;
       if (this.canMove === true) {
-        _results = [];
         for (i in this.dir) {
           if (this.setMove(core.input, i)) {
+            isKeydown = true;
             this.canMove = false;
             if (this.move(core.event.collision)) {
-              _results.push(core.tile.updateOffset({
+              core.tile.updateOffset({
                 x: this.pos.x - 7,
                 y: this.pos.y - 7
-              }));
-            } else {
-              _results.push(void 0);
+              });
             }
-          } else {
-            _results.push(void 0);
           }
         }
-        return _results;
       }
+      return this.walk = isKeydown;
     };
 
     Player.prototype.setMove = function(input, dir) {

@@ -11,6 +11,8 @@ class Player
 	frame: 0
 	tile: {}
 	image: null
+	walk: false
+	nextFrame: false
 	canMove: false
 	canAttack: true
 
@@ -28,8 +30,14 @@ class Player
 		@state = 0
 		@frame = 0
 		@image = core.tile.loadSpriteset('mage')
-		core.timers.addTimer(80, (@canMove) =>
+
+		core.timers.addTimer(120, (@canMove) =>
 			@canMove = true
+			return true
+		)
+
+		core.timers.addTimer(120, (@nextFrame) =>
+			@nextFrame = true
 			return true
 		)
 
@@ -39,7 +47,12 @@ class Player
 		@updateFrame(core)
 
 	updateFrame: (core) ->
-		@frame = @frame > 3 ? 0 : @frame + 1
+		if @walk and @nextFrame
+			@nextFrame = false
+			if @frame < 3
+				@frame++
+			else
+				@frame = 0
 
 	updateAttack: (core) ->
 		if @canAttack == true
@@ -62,12 +75,16 @@ class Player
 			return false
 
 	updateMove: (core) ->
+		isKeydown = false
+
 		if @canMove == true
 			for i of @dir
 				if @setMove(core.input, i)
+					isKeydown = true
 					@canMove = false
 					if @move(core.event.collision)
 						core.tile.updateOffset({x: @pos.x - 7, y: @pos.y - 7})
+		@walk = isKeydown
 
 	setMove: (input, dir) ->
 		if input.keys[input.direction[dir]]
