@@ -1,7 +1,10 @@
 class Mob
 	arr: []
+	image: {}
 
-	constructor: () ->
+	constructor: (core) ->
+		@image = core.tile.loadSpriteset('snowman')
+
 		for i in [0..3]
 			@arr.push({})
 
@@ -9,3 +12,4 @@ class Mob
 		core.event.apply(@arr[i]) for i in @arr
 
 	draw: (context) ->
+		context.drawImage(@image, 0, 0)

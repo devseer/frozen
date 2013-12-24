@@ -7,6 +7,7 @@ class Tile
 		iceworld: 'iceworld.png'
 		mage: 'mage.png'
 		snowball: 'snowball.png'
+		snowman: 'snowman.png'
 
 	constructor: () ->
 		@tile = { width: 16, height: 16 }

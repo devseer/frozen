@@ -118,7 +118,8 @@
     Tile.prototype.source = {
       iceworld: 'iceworld.png',
       mage: 'mage.png',
-      snowball: 'snowball.png'
+      snowball: 'snowball.png',
+      snowman: 'snowman.png'
     };
 
     function Tile() {
@@ -283,8 +284,11 @@
   Mob = (function() {
     Mob.prototype.arr = [];
 
-    function Mob() {
+    Mob.prototype.image = {};
+
+    function Mob(core) {
       var i, _i;
+      this.image = core.tile.loadSpriteset('snowman');
       for (i = _i = 0; _i <= 3; i = ++_i) {
         this.arr.push({});
       }
@@ -301,7 +305,9 @@
       return _results;
     };
 
-    Mob.prototype.draw = function(context) {};
+    Mob.prototype.draw = function(context) {
+      return context.drawImage(this.image, 0, 0);
+    };
 
     return Mob;
 
