@@ -55,6 +55,27 @@
 
   })();
 
+  Generate = (function() {
+    Generate.prototype.type = {
+      particle: 'particle'
+    };
+
+    Generate.prototype.objects = {};
+
+    function Generate() {}
+
+    Generate.prototype.spawn = function(type, pos, direction) {
+      return console.log('spawn ' + this.type[type]);
+    };
+
+    Generate.prototype.update = function(objects) {
+      return this.objecs = objects;
+    };
+
+    return Generate;
+
+  })();
+
   Handle = (function() {
     function Handle(canvas, bgm, sfx) {
       this.canvas = document.getElementById(canvas);
@@ -286,30 +307,141 @@
 
     Mob.prototype.image = {};
 
+    Mob.prototype.offset = {};
+
+    Mob.prototype.bound = {
+      x: 32,
+      y: 32
+    };
+
+    Mob.prototype.nextMove = false;
+
     function Mob(core) {
-      var i, _i;
+      var i, _i,
+        _this = this;
       this.image = core.tile.loadSpriteset('snowman');
       for (i = _i = 0; _i <= 3; i = ++_i) {
-        this.arr.push({});
+        this.arr.push({
+          hp: 5,
+          pos: {
+            x: 0,
+            y: 0
+          }
+        });
       }
+      core.timers.addTimer(200, function(nextMove) {
+        _this.nextMove = nextMove;
+        _this.nextMove = true;
+        return true;
+      });
     }
 
     Mob.prototype.update = function(core) {
-      var i, _i, _len, _ref, _results;
-      _ref = this.arr;
+      var i, _results;
+      this.offset = core.tile.offset;
+      if (this.nextMove) {
+        this.nextMove = false;
+        _results = [];
+        for (i in this.arr) {
+          _results.push(this.move(this.arr[i]));
+        }
+        return _results;
+      }
+    };
+
+    Mob.prototype.move = function(mob) {
+      var x, y;
+      x = 1 - Math.floor(Math.random() * 2);
+      y = 1 - Math.floor(Math.random() * 2);
+      if (this.checkBound(x, y)) {
+        mob.pos.x += x;
+        return mob.pos.y += y;
+      }
+    };
+
+    Mob.prototype.checkBound = function(x, y) {
+      return x >= 0 && x < this.bound.x && y >= 0 && y < this.bound.y;
+    };
+
+    Mob.prototype.checkVisible = function(mob) {
+      return mob.pos.x >= this.offset.x && mob.pos.x < this.offset.x + 32 && mob.pos.y >= this.offset.y && mob.pos.y < this.offset.y + 32;
+    };
+
+    Mob.prototype.draw = function(context) {
+      var i, _results;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        i = _ref[_i];
-        _results.push(core.event.apply(this.arr[i]));
+      for (i in this.arr) {
+        if (this.checkVisible(this.arr[i])) {
+          _results.push(context.drawImage(this.image, 0, 0, 16, 16, 128 + this.arr[i].pos.x * 16, this.arr[i].pos.y * 16, 16, 16));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };
 
-    Mob.prototype.draw = function(context) {
-      return context.drawImage(this.image, 0, 0);
+    return Mob;
+
+  })();
+
+  Particle = (function() {
+    Particle.prototype.list = [];
+
+    Particle.prototype.snowball = {};
+
+    Particle.prototype.nextFrame = false;
+
+    Particle.prototype.frame = 0;
+
+    function Particle(core) {
+      var _this = this;
+      this.snowball = core.tile.loadSpriteset('snowball');
+      core.timers.addTimer(100, function(nextFrame) {
+        _this.nextFrame = nextFrame;
+        _this.nextFrame = true;
+        return true;
+      });
+    }
+
+    Particle.prototype.update = function() {
+      var i, _i, _len, _ref, _results;
+      if (this.nextFrame) {
+        this.nextFrame = false;
+        if (this.frame < 3) {
+          this.frame++;
+        } else {
+          this.frame = 0;
+        }
+      }
+      _ref = this.list;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        _results.push(this.updatePosition(this.list[i]));
+      }
+      return _results;
     };
 
-    return Mob;
+    Particle.prototype.updatePosition = function(particle) {
+      return console.log(article.direction);
+    };
+
+    Particle.prototype.addParticle = function(type, pos, direction) {
+      return list.push({
+        type: type,
+        pos: {
+          x: pos.x,
+          y: pos.y
+        },
+        direction: direction
+      });
+    };
+
+    Particle.prototype.draw = function(context) {
+      return context.drawImage(this.snowball, 16 * this.frame, 0, 16, 16, 128, 0, 16, 16);
+    };
+
+    return Particle;
 
   })();
 
@@ -547,88 +679,6 @@
     };
 
     return World;
-
-  })();
-
-  Particle = (function() {
-    Particle.prototype.list = [];
-
-    Particle.prototype.snowball = {};
-
-    Particle.prototype.nextFrame = false;
-
-    Particle.prototype.frame = 0;
-
-    function Particle(core) {
-      var _this = this;
-      this.snowball = core.tile.loadSpriteset('snowball');
-      core.timers.addTimer(100, function(nextFrame) {
-        _this.nextFrame = nextFrame;
-        _this.nextFrame = true;
-        return true;
-      });
-    }
-
-    Particle.prototype.update = function() {
-      var i, _i, _len, _ref, _results;
-      if (this.nextFrame) {
-        this.nextFrame = false;
-        if (this.frame < 3) {
-          this.frame++;
-        } else {
-          this.frame = 0;
-        }
-      }
-      _ref = this.list;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        i = _ref[_i];
-        _results.push(this.updatePosition(this.list[i]));
-      }
-      return _results;
-    };
-
-    Particle.prototype.updatePosition = function(particle) {
-      return console.log(article.direction);
-    };
-
-    Particle.prototype.addParticle = function(type, pos, direction) {
-      return list.push({
-        type: type,
-        pos: {
-          x: pos.x,
-          y: pos.y
-        },
-        direction: direction
-      });
-    };
-
-    Particle.prototype.draw = function(context) {
-      return context.drawImage(this.snowball, 16 * this.frame, 0, 16, 16, 128, 0, 16, 16);
-    };
-
-    return Particle;
-
-  })();
-
-  Generate = (function() {
-    Generate.prototype.type = {
-      particle: 'particle'
-    };
-
-    Generate.prototype.objects = {};
-
-    function Generate() {}
-
-    Generate.prototype.spawn = function(type, pos, direction) {
-      return console.log('spawn ' + this.type[type]);
-    };
-
-    Generate.prototype.update = function(objects) {
-      return this.objecs = objects;
-    };
-
-    return Generate;
 
   })();
 
