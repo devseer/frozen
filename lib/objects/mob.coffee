@@ -4,10 +4,11 @@ class Mob
 	offset: {}
 	bound: {x: 32, y: 32}
 	nextMove: false
+	tileSize: {}
 
 	constructor: (core) ->
 		@image = core.tile.loadSpriteset('snowman')
-
+		@tileSize = { width: core.tile.tile.width, height: core.tile.tile.height}
 		for i in [0..3]
 			@arr.push({
 				hp: 5
@@ -25,8 +26,6 @@ class Mob
 			for i of @arr
 				@move(@arr[i])
 
-		#core.event.apply(@arr[i]) for i in @arr
-
 	move: (mob) ->
 		x = 1 - Math.floor(Math.random() * 2)
 		y = 1 - Math.floor(Math.random() * 2)
@@ -38,8 +37,8 @@ class Mob
 		return x >= 0 && x < @bound.x && y >= 0 && y < @bound.y
 
 	checkVisible: (mob) ->
-		return mob.pos.x >= @offset.x && mob.pos.x < @offset.x + 32 \
-			&& mob.pos.y >= @offset.y && mob.pos.y < @offset.y + 32
+		return mob.pos.x >= @offset.x && mob.pos.x < @offset.x + @bound.x \
+			&& mob.pos.y >= @offset.y && mob.pos.y < @offset.y + @bound.y
 
 	draw: (context) ->
 		for i of @arr
@@ -47,7 +46,7 @@ class Mob
 				context.drawImage( \
 					@image, \
 					0, 0, \
-					16, 16, \
-					128 + @arr[i].pos.x * 16, @arr[i].pos.y * 16, \
-					16, 16
+					@tileSize.width, @tileSize.height, \
+					128 + @arr[i].pos.x * @tileSize.width, @arr[i].pos.y * @tileSize.height, \
+					@tileSize.width, @tileSize.height
 				)

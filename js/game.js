@@ -316,10 +316,16 @@
 
     Mob.prototype.nextMove = false;
 
+    Mob.prototype.tileSize = {};
+
     function Mob(core) {
       var i, _i,
         _this = this;
       this.image = core.tile.loadSpriteset('snowman');
+      this.tileSize = {
+        width: core.tile.tile.width,
+        height: core.tile.tile.height
+      };
       for (i = _i = 0; _i <= 3; i = ++_i) {
         this.arr.push({
           hp: 5,
@@ -364,7 +370,7 @@
     };
 
     Mob.prototype.checkVisible = function(mob) {
-      return mob.pos.x >= this.offset.x && mob.pos.x < this.offset.x + 32 && mob.pos.y >= this.offset.y && mob.pos.y < this.offset.y + 32;
+      return mob.pos.x >= this.offset.x && mob.pos.x < this.offset.x + this.bound.x && mob.pos.y >= this.offset.y && mob.pos.y < this.offset.y + this.bound.y;
     };
 
     Mob.prototype.draw = function(context) {
@@ -372,7 +378,7 @@
       _results = [];
       for (i in this.arr) {
         if (this.checkVisible(this.arr[i])) {
-          _results.push(context.drawImage(this.image, 0, 0, 16, 16, 128 + this.arr[i].pos.x * 16, this.arr[i].pos.y * 16, 16, 16));
+          _results.push(context.drawImage(this.image, 0, 0, this.tileSize.width, this.tileSize.height, 128 + this.arr[i].pos.x * this.tileSize.width, this.arr[i].pos.y * this.tileSize.height, this.tileSize.width, this.tileSize.height));
         } else {
           _results.push(void 0);
         }
